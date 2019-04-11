@@ -1,9 +1,9 @@
 # Swinging-game
 A physics game about swinging
 
-The aim of the game is to touch all of the red circles, while avoiding the grey ones.
-You do this by setting strings and using them to siwng in to position.
-You can only set strings on light blue squares.
+The aim of the game is to touch all of the red circles, while avoiding the grey ones
+You do this by setting strings and using them to siwng in to position
+You can only set strings on light blue squares
 
 Controls:
 Jump - w
