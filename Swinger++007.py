@@ -3,28 +3,28 @@ import sqlite3
 import math
 import random
 
-#####==============================Adjustables (see also the 1st and last sections of __init__ of the human class
-#####==========Colours
-#####Baackground
+### Adjustables (see also the 1st and last sections of __init__ of the human class
+## Colours
+# Background
 bgInteract=(163,200,255)
 bgDull=(133, 168, 255)
 bgFloor=(163, 200, 100)
 
-#####enemies
+# Enemies
 typCol=((203,80,82), (255,231,217))
 
-#####Player
+# Player
 plyCol=(66,67,89)
 strCol=(0,0,0)
 hpCol=((150,255,59), (200,200,200))
 
-#####==========Other
-#####Screen and framerate
+## Other
+# Screen and framerate
 fps=60
 screenX=1600
 screenY=900
 
-#####Scaling
+#S caling
 scale=30#               px/m
 tileSize=2*scale
 damageScale=200
@@ -33,8 +33,7 @@ pygame.init()
 clock=pygame.time.Clock()
 screen=pygame.display.set_mode((screenX,screenY))
 
-
-#####For typ==0: self.main
+#For typ==0: self.main
 mX=0
 mY=1
 mRad=2# (radius)
@@ -43,7 +42,7 @@ mRot=4# (rotation speed (entered as rotations per second, stored as radians per 
 mDir=5# (Direction (1 (anticlockwise), or -1 (clockwise)
 mDed=6# (dead)
 
-#####For typ==0: self.sub
+#For typ==0: self.sub
 sRad=0# (radius)
 sDst=1# (distance)
 sTyp=2# (type)
@@ -52,12 +51,8 @@ sY=4
 sAng=5# (angle)
 sDed=6# (dead)
 
-
-
 def hyp(x, y, X, Y):
     return (((X-x)**2)+((Y-y)**2))**(1/2)
-
-
 
 def checkT_circRect(rx, ry, w, h, cx, cy, r):#r for rectangle, c for circle
     touch=False
@@ -83,8 +78,6 @@ def checkT_circRect(rx, ry, w, h, cx, cy, r):#r for rectangle, c for circle
         if ry<=cy<=ry+h and rx-r<=cx<=rx+w+r:
             touch=True
     return touch
-
-
 
 class human():
     def __init__(self):
@@ -115,10 +108,8 @@ class human():
         self.runLimit=(6*scale)/fps#        px/frame  (all these are maybe incorrect since adding 
         self.runFriction=30000/(fps*scale)# N/frame    scale to them, feel free to correct)
 
-
     def gravity(self,fps):
         self.fY+=(0.1962*self.mass*scale)/fps
-
 
     def place(self):
         self.chX=self.x-self.oldX
@@ -141,7 +132,6 @@ class human():
         self.fX=0
         self.fY=0
 
-
     def swing(self):
         dist=hyp(self.x, self.y, self.pivotX, self.pivotY)
         if dist>self.radius:
@@ -149,13 +139,11 @@ class human():
             self.x=self.pivotX-((self.pivotX-self.x)*ratio)
             self.y=self.pivotY-((self.pivotY-self.y)*ratio)
 
-
     def latch(self,pos):
         self.pivotX=pos[0]
         self.pivotY=pos[1]
         self.radius=hyp(self.x, self.y, self.pivotX, self.pivotY)
         self.swinging=True
-
 
     def boost(self):
         chTotal=((self.chX**2)**(1/2))+((self.chY**2)**(1/2))
@@ -180,8 +168,6 @@ class human():
                     col=hpCol[0]
                 pygame.draw.rect(screen, col, pygame.Rect(((screenX-self.hpMax-10)//2)+(x*(self.hpPart+2)), 20, self.hpPart, 20))
 
-
-
 class background():
     def __init__(self, lv=1):
         self.lv=lv
@@ -190,7 +176,6 @@ class background():
             cursor=db.cursor()
             cursor.execute("SELECT * FROM level_"+str(self.lv))
             self.display=cursor.fetchall()
-
 
     def draw(self, x, y, w, h):
         tile=(x-((screenX+w)//2))//tileSize
@@ -206,7 +191,6 @@ class background():
                                                  tileSize,
                                                  tileSize))
         pygame.draw.rect(screen, bgFloor, pygame.Rect(0, screenY-h-y-(screenY//2)+(h//2), screenX, screenY//2))
-
 
 class enemy():
     def __init__(self, typ=None, main=None, sub=None):
@@ -242,7 +226,6 @@ class enemy():
                     if I[sRad]==0:
                         self.sub[i][sDed]=True
 
-
     def do(self):
         if self.typ==0:
             if self.sub!=None:
@@ -266,11 +249,9 @@ class enemy():
                         self.sub[i][sX]=self.main[mX]+(math.sin(remainder)*I[sDst]*multX)
                         self.sub[i][sY]=self.main[mY]+(math.cos(remainder)*I[sDst]*multY)
 
-
     def be(self):
         if self.typ==0:
             pass
-
 
     def checkHit(self, x, y, w, h):
         hurtTot=0
@@ -298,7 +279,6 @@ class enemy():
             hurtTot/=scale
         return hurtTot
 
-
     def think(self, x, y):
         if abs(x-self.main[mX])<=screenX and not self.dead:
             self.active=True
@@ -306,7 +286,6 @@ class enemy():
         else:
             self.active=False
             self.be()
-
 
     def draw(self, x, y, w, h):
         if not self.dead:
@@ -318,8 +297,6 @@ class enemy():
                 for I in self.sub:
                     if not I[sDed]:
                         pygame.draw.circle(screen, typCol[I[sTyp]], (round(I[sX]+modX), round(I[sY]+modY)), I[sRad])
-
-
 
 def main():
     player=human()
@@ -339,19 +316,16 @@ def main():
                        [0, [45, 5, 1.6, 0, 1 ,1/16]],
                        [0, [50, 4, 0, 1, -1 ,1/4]]]
     """
-
     
     enList=[]
     for I in enStartConditions:
         enList.append(enemy(typ=I[0], main=I[1], sub=I[2]))
         #enList.append(enemy(typ=I[0], main=I[1]))
 
-
     pressA=False
     pressD=False
     pressSpace=False
     direction=""
-
 
     timer=0
     done=False
@@ -390,8 +364,6 @@ def main():
                 if screen.get_at(pos)[:3]==bgInteract:
                     player.latch(edPos)
 
-
-
         if player.y==-player.height:
             if pressA and not pressD:
                 player.fX-=player.runForce
@@ -414,7 +386,6 @@ def main():
         for i in range(len(enList)):
             enList[i].think(player.x, player.y)
 
-
         for i in range(len(enList)):
             enList[i].draw(player.x, player.y, player.width, player.height)
         player.draw()
@@ -433,7 +404,6 @@ def main():
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 done=True
-
 
 main()
 pygame.quit()
